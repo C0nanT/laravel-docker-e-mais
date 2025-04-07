@@ -32,7 +32,6 @@ services:
     ports:
       - "5432:5432"
 
-  # Opcional: Descomente para usar Nginx
   # nginx:
   #   image: nginx:alpine
   #   ports:
