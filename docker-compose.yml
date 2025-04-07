@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ./docker/php
+      args:
+        - USER_ID=${UID:-1000}
+        - GROUP_ID=${GID:-1000}
+    user: "${UID:-1000}:${GID:-1000}"
+    volumes:
+      - ./src:/var/www
+    ports:
+      - "8000:8000"
+    environment:
+      - USER=${USER:-laravel}
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=laravel
+      - DB_USERNAME=laravel
+      - DB_PASSWORD=secret
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=laravel
+      - POSTGRES_USER=laravel
+      - POSTGRES_PASSWORD=secret
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # Opcional: Descomente para usar Nginx
+  # nginx:
+  #   image: nginx:alpine
+  #   ports:
+  #     - "8080:80"
+  #   volumes:
+  #     - ./src:/var/www
+  #     - ./docker/nginx:/etc/nginx/conf.d
+  #   depends_on:
+  #     - app
+
+volumes:
+  postgres_data:
