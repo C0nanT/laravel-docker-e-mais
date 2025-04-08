@@ -1,7 +1,7 @@
 services:
   app:
     build:
-      context: ./docker/php
+      context: .
       args:
         - USER_ID=${UID:-1000}
         - GROUP_ID=${GID:-1000}
@@ -31,16 +31,6 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-
-  # nginx:
-  #   image: nginx:alpine
-  #   ports:
-  #     - "8080:80"
-  #   volumes:
-  #     - ./src:/var/www
-  #     - ./docker/nginx:/etc/nginx/conf.d
-  #   depends_on:
-  #     - app
 
 volumes:
   postgres_data:
