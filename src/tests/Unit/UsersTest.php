@@ -11,14 +11,21 @@ test('get users', function () {
     $response->assertJsonStructure(['data' => ['*' => ['id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at']]]);
 });
 
-test('get user 1', function () {
+test('get user with search: admin', function () {
+    $response = $this->get('/users?search=admin');
+
+    $response->assertStatus(200);
+    $response->assertJsonStructure(['data' => ['*' => ['id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at']]]);
+});
+
+test('get user id: 1', function () {
     $response = $this->get('/users/1');
 
     $response->assertStatus(200);
     $response->assertJsonStructure(['user' => ['id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at']]);
 });
 
-test('patch user 1', function (){
+test('patch user id: 1', function (){
 
     $response = $this->patch('/users/1', [
         'name' => 'patch Name',
@@ -29,7 +36,7 @@ test('patch user 1', function (){
     $response->assertJsonStructure(['user' => ['id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at']]);
 });
 
-test('put user 1', function (){
+test('put user id: 1', function (){
 
     $response = $this->patch('/users/1', [
         'name' => 'put name',
