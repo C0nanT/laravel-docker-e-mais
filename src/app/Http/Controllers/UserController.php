@@ -10,6 +10,10 @@ class UserController extends Controller
 {
     public function index()
     {
+        if(request()->has('search')) {
+            return $this->search(request()->get('search'));
+        }
+        
         $users = User::all();
         return response()->json([
             'users' => $users
@@ -100,14 +104,16 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function search($query)
+    protected function search($query)
     {
         if (empty($query)) {
             return response()->json([
                 'message' => 'Query parameter is required'
             ], 422);
         }
-    
+
+        $query = trim($query);
+
         $users = User::where('name', 'ILIKE', "%{$query}%")
             ->get();
     
