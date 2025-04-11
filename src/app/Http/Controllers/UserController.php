@@ -13,7 +13,7 @@ class UserController extends Controller
         if(request()->has('search')) {
             return $this->search(request()->get('search'));
         }
-        
+
         $users = User::all();
         return response()->json([
             'users' => $users
@@ -121,5 +121,4 @@ class UserController extends Controller
             'users' => $users
         ], 200);
     }
-    
 }
