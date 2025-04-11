@@ -1,4 +1,4 @@
-name: PHP Composer
+name: Laravel Tests with PEST
 
 on:
   push:
@@ -6,34 +6,53 @@ on:
   pull_request:
     branches: [ "main" ]
 
-permissions:
-  contents: read
-
 jobs:
-  build:
-
+  laravel-tests:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: laravel
+          MYSQL_USER: laravel
+          MYSQL_PASSWORD: secret
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
-
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v3
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
       with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
+        php-version: '8.2'
+        extensions: mbstring, xml, curl, dom, fileinfo, mysql, pdo, sqlite, pdo_sqlite
+        coverage: none
+
+    - name: Copy .env
+      run: |
+        cp .env.example .env
+        echo "APP_KEY=" >> .env
+        php artisan key:generate
+
+    - name: Configure MySQL
+      run: |
+        echo "DB_CONNECTION=mysql" >> .env
+        echo "DB_HOST=127.0.0.1" >> .env
+        echo "DB_PORT=3306" >> .env
+        echo "DB_DATABASE=laravel" >> .env
+        echo "DB_USERNAME=laravel" >> .env
+        echo "DB_PASSWORD=secret" >> .env
 
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+      run: composer install --prefer-dist --no-progress --no-interaction
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
+    - name: Run migrations
+      run: php artisan migrate --force
 
-    # - name: Run test suite
-    #   run: composer run-script test
+    - name: Execute tests
+      run: ./vendor/bin/pest
