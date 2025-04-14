@@ -42,6 +42,7 @@ jobs:
 
     - name: Configure MySQL
       run: |
+        cd src
         echo "DB_CONNECTION=mysql" >> .env
         echo "DB_HOST=127.0.0.1" >> .env
         echo "DB_PORT=3306" >> .env
@@ -50,10 +51,16 @@ jobs:
         echo "DB_PASSWORD=secret" >> .env
 
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --no-interaction
+      run: |
+        cd src
+        composer install --prefer-dist --no-progress --no-interaction
 
     - name: Run migrations
-      run: php artisan migrate --force
+      run: |
+        cd src
+        php artisan migrate --force
 
     - name: Execute tests
-      run: ./vendor/bin/pest
+      run: |
+        cd src
+        ./vendor/bin/pest
