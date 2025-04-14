@@ -37,7 +37,15 @@ jobs:
       run: |
         cd src
         cp .env.example .env
-        echo "APP_KEY=" >> .env
+
+    - name: Install dependencies
+      run: |
+        cd src
+        composer install --prefer-dist --no-progress --no-interaction
+
+    - name: Generate application key
+      run: |
+        cd src
         php artisan key:generate
 
     - name: Configure MySQL
@@ -49,11 +57,6 @@ jobs:
         echo "DB_DATABASE=laravel" >> .env
         echo "DB_USERNAME=laravel" >> .env
         echo "DB_PASSWORD=secret" >> .env
-
-    - name: Install dependencies
-      run: |
-        cd src
-        composer install --prefer-dist --no-progress --no-interaction
 
     - name: Run migrations
       run: |
