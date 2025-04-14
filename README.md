@@ -8,7 +8,7 @@ Um projeto simples com o objetivo de crescer com base na necessidade. Este proje
 - API RESTful
 - Integração com banco de dados
 - Integração com Grafana
-- Testes com PHPUnit
+- Testes com Pest
 - E outras tecnologias que possam surgir.
 
 ## Pré-requisitos
