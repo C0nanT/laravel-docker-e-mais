@@ -10,60 +10,32 @@ jobs:
   laravel-tests:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: laravel
-          MYSQL_USER: laravel
-          MYSQL_PASSWORD: secret
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
-        extensions: mbstring, xml, curl, dom, fileinfo, mysql, pdo, sqlite, pdo_sqlite
-        coverage: none
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
     - name: Copy .env
       run: |
         cd src
         cp .env.example .env
 
-    - name: Install dependencies
-      run: |
-        cd src
-        composer install --prefer-dist --no-progress --no-interaction
+    - name: Start Docker containers
+      run: docker-compose up -d db
+
+    - name: Wait for database
+      run: sleep 5
+
+    - name: Install dependencies with Docker
+      run: docker-compose run --rm app composer install --prefer-dist --no-progress --no-interaction
 
     - name: Generate application key
-      run: |
-        cd src
-        php artisan key:generate
-
-    - name: Configure MySQL
-      run: |
-        cd src
-        echo "DB_CONNECTION=mysql" >> .env
-        echo "DB_HOST=127.0.0.1" >> .env
-        echo "DB_PORT=3306" >> .env
-        echo "DB_DATABASE=laravel" >> .env
-        echo "DB_USERNAME=laravel" >> .env
-        echo "DB_PASSWORD=secret" >> .env
+      run: docker-compose run --rm app php artisan key:generate
 
     - name: Run migrations
-      run: |
-        cd src
-        php artisan migrate --force
+      run: docker-compose run --rm app php artisan migrate --force
 
     - name: Execute tests
-      run: |
-        cd src
-        ./vendor/bin/pest
+      run: docker-compose run --rm test
