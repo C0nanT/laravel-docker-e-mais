@@ -35,6 +35,7 @@ jobs:
 
     - name: Copy .env
       run: |
+        cd src
         cp .env.example .env
         echo "APP_KEY=" >> .env
         php artisan key:generate
