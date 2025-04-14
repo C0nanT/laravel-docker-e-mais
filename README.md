@@ -37,3 +37,14 @@ Acesse o container da aplicação:
 ```bash
 php artisan serve --host 0.0.0.0
 ```
+
+## Rodando PEST dentro do Docker
+Suba o container temporário de testes:
+```bash
+docker compose run test
+```
+
+Esse comando gera um container temporário, e sempre criará um novo, caso queira rodar os testes e remover os antigos, você pode usar o comando:
+```bash
+docker compose run --remove-orphans test
+```
