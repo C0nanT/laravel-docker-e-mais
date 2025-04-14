@@ -62,6 +62,11 @@ jobs:
         cd src
         php artisan migrate --force
 
+    - name: Seed database
+      run: |
+        cd src
+        php artisan db:seed --force
+
     - name: Execute tests
       run: |
         cd src
