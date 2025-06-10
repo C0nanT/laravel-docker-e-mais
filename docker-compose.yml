@@ -31,15 +31,18 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-
-  test:
-    build:
-      context: .
-      dockerfile: Dockerfile
+      
+  db_tests:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=laravel_testing
+      - POSTGRES_USER=laravel
+      - POSTGRES_PASSWORD=secret
     volumes:
-      - ./src:/app
-    working_dir: /app
-    command: ./vendor/bin/pest
+      - postgres_tests_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
 
 volumes:
   postgres_data:
+  postgres_tests_data:
