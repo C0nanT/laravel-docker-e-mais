@@ -96,6 +96,21 @@ return [
             'search_path' => 'public',
             'sslmode' => 'prefer',
         ],
+        
+        'pgsql_testing' => [
+            'driver' => 'pgsql',
+            'url' => env('DB_URL'),
+            'host' => 'db_tests',
+            'port' => '5432',
+            'database' => 'laravel_testing',
+            'username' => 'laravel',
+            'password' => 'secret',
+            'charset' => env('DB_CHARSET', 'utf8'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'prefer',
+        ],
 
         'sqlsrv' => [
             'driver' => 'sqlsrv',
