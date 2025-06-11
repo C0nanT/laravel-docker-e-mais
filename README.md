@@ -13,7 +13,7 @@ Um projeto simples com o objetivo de crescer com base na necessidade. Este proje
 
 ## Pré-requisitos
 
-Inicie os containers do Docker:
+Inicie os containers no Docker:
 ```bash
 docker compose up -d
 ```
@@ -28,6 +28,13 @@ Configure o ambiente Laravel:
 cp .env.example .env
 composer install
 php artisan key:generate
+
+Reinicie e alimente os bancos caso necessário: 
+```bash
+./reset.sh
+```
+
+```bash
 php artisan migrate
 php artisan db:seed
 ```
@@ -39,12 +46,7 @@ php artisan serve --host 0.0.0.0
 ```
 
 ## Rodando PEST dentro do Docker
-Suba o container temporário de testes:
+Certifique-se de que o container do app está rodando e execute os testes com o seguinte comando:
 ```bash
-docker compose run test
-```
-
-Esse comando gera um container temporário, e sempre criará um novo, caso queira rodar os testes e remover os antigos, você pode usar o comando:
-```bash
-docker compose run --remove-orphans test
+./tests.sh
 ```
